@@ -1,9 +1,6 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,29 +8,40 @@ use Inertia\Inertia;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
 |
 */
 
-// Route::get('/', function () {
-//     return Inertia::render('Welcome', [
-//         'canLogin' => Route::has('login'),
-//         'canRegister' => Route::has('register'),
-//         'laravelVersion' => Application::VERSION,
-//         'phpVersion' => PHP_VERSION,
-//     ]);
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/produk_vue', function () {
+    return view('produk_page');
+});
 
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
+Route::get('/{pathMatch}', function() {
+    return view('produk_page');
+})->where('pathMatch', ".*");
 
-// require _DIR_.'/auth.php';
-Route::view('/','home')->name('home');
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('role:user');
+Route::get('/about', function () {
+    $data = [
+        'pageTitle' => 'Tentang Kami',
+        'content' => 'Ini adalah halaman tentang kami.'
+    ];
+    return view('about', $data);
+});
+
+
+
+Route::middleware(['auth', 'user','admin'])->group(function() {
+    Route::resource('/produk', 'App\Http\Controllers\ProdukController');
+});
+
+// Route::resource('/product_vue', 'TaskController');
+
+// Route::resource('/product', 'App\Http\Controllers\ProductController');

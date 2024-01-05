@@ -1,3 +1,3 @@
 <template>
-    Coming soon.
+    <router-view/>
 </template>
